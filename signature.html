@@ -93,6 +93,11 @@
   <div class="card">
     <div class="logo">Vitalis</div>
     <div class="title">Veuillez signer le document ci-dessous</div>
+
+    <div>
+        <label>Votre nom et prénom :</label>
+        <input type="text" id="nomPrenom" placeholder="Ex: Jean Dupont" />
+    </div>
  
     <div class="signature-wrapper">
       <label>Votre signature :</label>
@@ -160,6 +165,13 @@
  
     async function envoyer() {
       const status = document.getElementById('status');
+      const nomPrenom = document.getElementById('nomPrenom').value.trim();
+
+      if (!nomPrenom) {
+        status.textContent = 'Veuillez entrer votre nom et prénom.';
+        status.className = 'status error';
+        return;
+      }
  
       if (estVide()) {
         status.textContent = 'Veuillez signer avant de valider.';
@@ -183,14 +195,15 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            signature: imageBase64,
-            timestamp: timestamp
+         body: JSON.stringify({
+              signature: imageBase64,
+              nomPrenom: nomPrenom
           })
         });
         status.textContent = 'Signature envoyée avec succès ! Vous pouvez fermer cette page.';
         status.className = 'status';
         effacer();
+        document.getElementById('nomPrenom').value = '';
       } catch (err) {
         status.textContent = 'Erreur lors de l\'envoi. Réessayez.';
         status.className = 'status error';
