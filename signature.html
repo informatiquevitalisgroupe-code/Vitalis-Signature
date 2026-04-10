@@ -149,7 +149,7 @@
           effacer();
           document.getElementById('nomPrenom').value = '';
           document.getElementById('btnValider').disabled = false;
-          message.textContent = '';
+          window.location.href = 'succes.html';
         }, 2000);
       })
       .catch(() => {
