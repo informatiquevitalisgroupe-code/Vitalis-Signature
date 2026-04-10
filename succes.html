@@ -166,13 +166,12 @@
       animation: slideUp 0.5s ease forwards 1.7s;
     }
 
-    /* Zone logo fond blanc propre */
     .logo-zone {
       margin-top: 2rem;
       width: 100vw;
       padding: 1.8rem 2rem;
-      background: rgba(255, 255, 255, 0.92);
-      border-top: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+      border-top: 1px solid rgba(255,255,255,0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -184,14 +183,14 @@
     .logo-zone img {
       width: 70px;
       height: auto;
-      mix-blend-mode: multiply;
+      filter: brightness(0) invert(1);
     }
 
     .logo-text {
       font-size: 0.72rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: rgba(0,0,0,0.45);
+      color: rgba(255,255,255,0.4);
       font-weight: 500;
     }
 
