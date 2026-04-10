@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signature confirmée</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .glow-top {
+      position: fixed;
+      top: -150px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(220,80,20,0.25), transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .glow-bottom {
+      position: fixed;
+      bottom: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 500px; height: 300px;
+      background: radial-gradient(ellipse, rgba(180,20,20,0.2), transparent 70%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2.5rem 2rem 0;
+      max-width: 500px;
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .check-wrapper {
+      width: 90px;
+      height: 90px;
+      position: relative;
+      margin-bottom: 0.5rem;
+    }
+
+    .check-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 2.5px solid #e85d20;
+      position: absolute;
+      top: 0; left: 0;
+      box-shadow: 0 0 20px rgba(232,93,32,0.5), inset 0 0 20px rgba(232,93,32,0.05);
+      transform: scale(0);
+      animation: circleAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.3s;
+    }
+
+    @keyframes circleAppear {
+      0%   { transform: scale(0); opacity: 0; }
+      70%  { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .check-svg {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px; height: 40px;
+    }
+
+    .check-path {
+      stroke: #e85d20;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 55;
+      stroke-dashoffset: 55;
+      filter: drop-shadow(0 0 4px #e85d20);
+      animation: drawCheck 0.5s ease forwards 0.9s;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .pulse-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      border: 1px solid rgba(232,93,32,0.3);
+      transform: translate(-50%, -50%);
+      animation: pulseRing 2s ease-out infinite 1.5s;
+    }
+
+    @keyframes pulseRing {
+      0%   { transform: translate(-50%,-50%) scale(1); opacity: 0.5; }
+      100% { transform: translate(-50%,-50%) scale(2.2); opacity: 0; }
+    }
+
+    .bien-joue {
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #e85d20;
+      text-shadow: 0 0 12px rgba(232,93,32,0.6);
+      opacity: 0;
+      animation: slideUp 0.5s ease forwards 1.1s;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 6vw, 2.8rem);
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 40px rgba(220,80,20,0.3);
+      opacity: 0;
+      animation: slideUp 0.5s ease forwards 1.3s;
+    }
+
+    .divider {
+      width: 50px;
+      height: 2px;
+      background: linear-gradient(90deg, #c0392b, #e85d20);
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(232,93,32,0.6);
+      opacity: 0;
+      animation: slideUp 0.5s ease forwards 1.5s;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.8;
+      opacity: 0;
+      animation: slideUp 0.5s ease forwards 1.7s;
+    }
+
+    /* Zone logo fond blanc propre */
+    .logo-zone {
+      margin-top: 2rem;
+      width: 100vw;
+      padding: 1.8rem 2rem;
+      background: rgba(255, 255, 255, 0.92);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      animation: slideUp 0.5s ease forwards 2s;
+    }
+
+    .logo-zone img {
+      width: 70px;
+      height: auto;
+      mix-blend-mode: multiply;
+    }
+
+    .logo-text {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.45);
+      font-weight: 500;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+  <canvas id="particles"></canvas>
+
+  <div class="content">
+    <div class="check-wrapper">
+      <div class="pulse-ring"></div>
+      <div class="check-circle"></div>
+      <svg class="check-svg" viewBox="0 0 50 50">
+        <polyline class="check-path" points="10,25 21,36 40,14"/>
+      </svg>
+    </div>
+
+    <span class="bien-joue">Bien joué</span>
+    <h1 class="title">Signature validée</h1>
+    <div class="divider"></div>
+    <p class="subtitle">Vous avez signé le document avec succès.<br>Vous pouvez fermer cette page.</p>
+  </div>
+
+  <!-- ZONE LOGO — remplace logo.png par ton fichier -->
+  <div class="logo-zone">
+    <img src="logo.png" alt="Logo" />
+    <span class="logo-text">Ton texte ici</span>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COLORS = ['#e85d20', '#c0392b', '#ff6b35', '#ff9a3c', '#fff'];
+    const particles = [];
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 6;
+        this.vy = (Math.random() - 0.5) * 6 - 4;
+        this.alpha = 1;
+        this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        this.size = Math.random() * 3 + 1;
+        this.decay = Math.random() * 0.015 + 0.008;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.12;
+        this.alpha -= this.decay;
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.alpha);
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function explode(x, y, count) {
+      for (let i = 0; i < count; i++) particles.push(new Particle(x, y));
+    }
+
+    setTimeout(() => {
+      explode(canvas.width / 2, canvas.height / 2, 120);
+      setTimeout(() => explode(canvas.width * 0.3, canvas.height * 0.5, 60), 400);
+      setTimeout(() => explode(canvas.width * 0.7, canvas.height * 0.5, 60), 700);
+    }, 500);
+
+    setInterval(() => {
+      explode(Math.random() * canvas.width, Math.random() * canvas.height * 0.8, 25);
+    }, 2000);
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+        if (particles[i].alpha <= 0) particles.splice(i, 1);
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
